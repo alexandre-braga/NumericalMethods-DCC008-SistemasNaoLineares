@@ -23,6 +23,17 @@ function [f] = funcaoWTdw(w,t,g,i,j,N,E)
   endfor
 endfunction
 
+function [F] = funcaoWT(w,t,g,N)
+  F = zeros(N,1);
+  for i = 1:N
+    f = 0;
+    for k = 1:N
+      f += w(k) * t(k)^i - g(k);
+    endfor
+    F(i) = f;
+  endfor
+endfunction
+
 function [f] = funcaoWTdt(w,t,g,i,j,N,E)
   f = 0;
   for k = 1:N
@@ -62,12 +73,14 @@ args = argv();
 
 printf("Iniciando o programa\n");
 tol = 10e-8;
+E = 10e-8;
 a = -1;
 b =  1;
 N =  10;
 f = @(x) x.^2 + log(x);
 
 #tol = input('Insira a tolerância: ');
+#E = input('Insira a perturbação: ');
 #N = input('Defina o número de pontos de integração: ');
 #a = input('Insira o valor de a: ');
 #b = input('Insira o valor de b: ');
@@ -93,12 +106,19 @@ endfor
 
 [J] = jacobiana(w,t,g,N);
 
-#while norm(s(i), inf) > tol
-#    
-#endwhile
+while norm(s, inf) > tol
+    [w,t,g] = metodoDeIntegracao(a,b,N);
+    [F] = funcaoWT(w,t,g,N);
+    [J] = jacobiana(w,t,g,N);
+    s = J\(-F);
+    
+    wnext = s*w + w;
+    tnext = s*t + t;
+    w = wnext;
+    t = tnext;
+endwhile
 
-save PesosEPontosIntegrecao.text w t;
-save 
+save PesosEPontosIntegrecao.txt a b tol E h N w t;
 
 printf("Fim do programa\n");
 
