@@ -14,9 +14,9 @@ endfunction
 
 function [F] = funcaoWT(w,t,g,N)
   F = zeros(N,1);
-  for i = 1:N
+  for i = 1:N,
     f = 0;
-    for k = 1:N
+    for k = 1:N,
       f += w(k) * t(k).^i - g(k);
     endfor
     F(i) = f;
@@ -25,24 +25,26 @@ endfunction
 
 function [f] = funcaoWTdw(w,t,g,i,j,N,E)
   f = 0;
-  for k = 1:N
+  for k = 1:N,
     if k == j
-      f += (w(k) + E) * t(k).^i - g(k);
+      f += (w(k) + E) * t(k).^(i-1);
     else 
-      f += w(k) * t(k).^i - g(k);
+      f += w(k) * t(k).^(i-1);
     endif
   endfor
+  f-= g(i);
 endfunction
 
 function [f] = funcaoWTdt(w,t,g,i,j,N,E)
   f = 0;
-  for k = 1:N
+  for k = 1:N,
     if k == j
-      f += w(k) * (t(k) + E).^i - g(k);
+      f += w(k) * (t(k) + E).^(i-1);
     else 
-      f += w(k) * t(k).^i - g(k);
+      f += w(k) * t(k).^(i-1);
     endif
   endfor
+  f -= g(i);
 endfunction
 
 function [df] = derivadaParcial(w,t,i,g,j,N,E)
@@ -57,11 +59,10 @@ function [df] = derivadaParcial(w,t,i,g,j,N,E)
   endif
 endfunction
 
-function [J] = jacobiana(w,t,g,N)
-    J = zeros(N, N);
-    E = 10e-8;
-    for j = 1:(2*N)
-       for i = 1:(2*N)
+function [J] = jacobiana(w,t,g,N,E)
+    J = zeros(2*N,2*N);
+    for i = 1:(2*N),
+       for j = 1:(2*N),
           J(i,j) = derivadaParcial(w,t,g,i,j,N,E); 
        endfor
     endfor
@@ -85,26 +86,21 @@ f = @(x) x.^2 + log(x);
 #a = input('Insira o valor de a: ');
 #b = input('Insira o valor de b: ');
 #f = str2func(input('Defina a função na forma f = @(x) expressão: ', 's'));
-
-#printf("Tolerancia %f\n", tol);
-#printf("a %d\n", a);
-#printf("b %f\n", b);
-#printf("N %f\n", N);
-#printf("f(2) %f\n", f(2));
+printf("f = %s\n", func2str(f));
 
 [w,t] = metodoDeIntegracao(a,b,N);
 
-g = zeros(N,1);
-for i = 1:N,
+g = zeros(2*N,1);
+for i = 1:(2*N),
     y = @(x) x.^i;
-    g(i) = simpson38(y,a,b,N);
+    g(i) = simpson38(y,a,b,2*N);
 endfor
 
 for i = 1:N,
  printf("%d = %f\n", i, g(i));
 endfor
 
-[J] = jacobiana(w,t,g,N);
+[J] = jacobiana(w,t,g,N,E);
 
 while norm(s, inf) > tol
     [w,t,g] = metodoDeIntegracao(a,b,N);
