@@ -12,6 +12,17 @@ function [w,t,g] = metodoDeIntegracao(a,b,N)
     endfor
 endfunction
 
+function [F] = funcaoWT(w,t,g,N)
+  F = zeros(N,1);
+  for i = 1:N
+    f = 0;
+    for k = 1:N
+      f += w(k) * t(k).^i - g(k);
+    endfor
+    F(i) = f;
+  endfor
+endfunction
+
 function [f] = funcaoWTdw(w,t,g,i,j,N,E)
   f = 0;
   for k = 1:N
@@ -23,24 +34,13 @@ function [f] = funcaoWTdw(w,t,g,i,j,N,E)
   endfor
 endfunction
 
-function [F] = funcaoWT(w,t,g,N)
-  F = zeros(N,1);
-  for i = 1:N
-    f = 0;
-    for k = 1:N
-      f += w(k) * t(k)^i - g(k);
-    endfor
-    F(i) = f;
-  endfor
-endfunction
-
 function [f] = funcaoWTdt(w,t,g,i,j,N,E)
   f = 0;
   for k = 1:N
     if k == j
-      f += w(k) * (t(k) + E)^i - g(k);
+      f += w(k) * (t(k) + E).^i - g(k);
     else 
-      f += w(k) * t(k)^i - g(k);
+      f += w(k) * t(k).^i - g(k);
     endif
   endfor
 endfunction
