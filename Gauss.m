@@ -1,16 +1,33 @@
 #!/home/kuroneko/snap/octave -qf
 1;
 
+function [g] = pontoMedioRepetida(a, b, N)
+    f = @(x) 1/x;
+    h = 1000;
+endfunction
+
 function [w,t,g] = metodoDeIntegracao(a,b,N)
     w = zeros(N, 1);
     t = zeros(N, 1);
     for i = 1:N/2,
-        w(i) = i*(b-a)/(2*n);
+        w(i) = i*(b-a)/(2*N);
         w(N-i) = w(i);
         t(i) = a + i*w(i)/2;
         t(N-i) = t(i);
     endfor
-    g = simpson38();
+    g = pontoMedioRepetida(a, b, N);
+endfunction
+
+function [F] = funcaoWT(w,t,g,N)
+  F = zeros(N,1);
+  for i = 1:N
+    f = 0;
+    for k = 1:N
+      f += w(k) * t(k)^i - g(k);
+    endfor
+    F(i) = f;
+  endfor
+
 endfunction
 
 function [f] = funcaoWTdw(w,t,g,i,j,N,E)
@@ -64,20 +81,26 @@ args = argv();
 
 printf("Iniciando o programa\n");
 tol = 10e-8;
+E = 10e-8;
 a = -1; #input('Insira o valor de a: ');
 b =  1; #input('Insira o valor de b: ');
 N =  7; input('Defina o número de pontos de integração: ');
 
-[w,t,g] = metodoDeIntegracao(a,b,N);
-[J] = jacobiana(w,t,g,N);
 
 
-while norm(s(i), inf) > tol
+while norm(s, inf) > tol
+    [w,t,g] = metodoDeIntegracao(a,b,N);
+    [F] = funcaoWT(w,t,g,N);
+    [J] = jacobiana(w,t,g,N);
+    s = J\(-F);
     
+    wnext = s*w + w;
+    tnext = s*t + t;
+    w = wnext;
+    t = tnext;
 endwhile
 
-save PesosEPontosIntegrecao.text w t;
-save 
+save PesosEPontosIntegrecao.text a b tol E h N w t;
 
 printf("Fim programa\n");
 
