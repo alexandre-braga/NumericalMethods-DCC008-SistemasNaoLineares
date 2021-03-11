@@ -92,7 +92,7 @@ printf("f = %s\n", func2str(f));
 
 g = zeros(2*N,1);
 for i = 1:(2*N),
-    y = @(x) x.^i;
+    y = @(x) x.^(i-1);
     g(i) = simpson38(y,a,b,2*N);
 endfor
 
