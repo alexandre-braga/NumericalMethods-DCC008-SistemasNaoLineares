@@ -47,7 +47,7 @@ function [f] = funcaoWTdt(w,t,g,i,j,N,E)
   f -= g(i);
 endfunction
 
-function [df] = derivadaParcial(w,t,i,g,j,N,E)
+function [df] = derivadaParcial(w,t,g,i,j,N,E)
   if j <= N
     f1 = funcaoWTdw(w,t,g,i,j,N,E);
     f2 = funcaoWTdw(w,t,g,i,0,N,0);
