@@ -41,7 +41,7 @@ endfunction
 function [f] = funcaoWTdt(w,t,g,i,j,N,E)
   f = 0;
   for k = 1:N,
-    if k == j
+    if k == j-N
       f += w(k) * (t(k) + E).^(i-1);
     else 
       f += w(k) * t(k).^(i-1);
@@ -80,8 +80,8 @@ tol = 10e-8;
 E = 10e-8;
 a = -1;
 b =  1;
-N =  4;
-f = @(x) x.^2 + log(x);
+N =  7;
+f = @(x) 1/x;
 it = 0;
 
 #tol = input('Insira a tolerância: ');
@@ -111,7 +111,13 @@ disp(t);
 while true
     [F] = funcaoWT(w,t,g,N);
     [J] = jacobiana(w,t,g,N,E);
+    printf("F: ");
+    disp(F);
+    printf("JACOBIANA: ");
+    disp(J);
     s = -J\F;
+    printf("S: ");
+    disp(s);
     for i = 1:(2*N)
       if i <= N
         wnext(i) = s(i) + w(i);
@@ -122,6 +128,8 @@ while true
     w = wnext;
     t = tnext;
     it++;
+    printf("TNEXT: ");
+    disp(tnext);
     if(norm(s, inf) <= tol)
         break;
     endif
