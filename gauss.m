@@ -1,5 +1,6 @@
 #!/snap/bin/octave.octave-cli
 1;
+format long;
 
 function [w,t] = metodoDeIntegracao(a,b,N)
     w = zeros(N, 1);
@@ -52,21 +53,17 @@ endfunction
 
 function [df] = derivadaParcial(w,t,g,i,j,N,E)
   if j <= N
-    f1 = funcaoWTdw(w,t,g,i,j,N,E);
-    f0 = funcaoWTdw(w,t,g,i,0,N,0);
-    df = (f1-f0)/E;
+    df = funcaoWTdw(w,t,g,i,j,N,E);
   else
-    f1 = funcaoWTdt(w,t,g,i,j,N,E);
-    f0 = funcaoWTdt(w,t,g,i,0,N,0);
-    df = (f1-f0)/E;
+    df = funcaoWTdt(w,t,g,i,j,N,E);
   endif
 endfunction
 
-function [J] = jacobiana(w,t,g,N,E)
+function [J] = jacobiana(w,t,g,N,E,F)
     J = zeros(2*N,2*N);
     for i = 1:(2*N),
        for j = 1:(2*N),
-          J(i,j) = derivadaParcial(w,t,g,i,j,N,E); 
+          J(i,j) = (derivadaParcial(w,t,g,i,j,N,E)-F(i))/E; 
        endfor
     endfor
 endfunction
@@ -80,8 +77,7 @@ tol = 10e-8;
 E = 10e-8;
 a = -1;
 b =  1;
-N =  7;
-f = @(x) 1/x;
+N =  2;
 it = 0;
 
 #tol = input('Insira a tolerância: ');
@@ -89,35 +85,35 @@ it = 0;
 #N = input('Defina o número de pontos de integração: ');
 #a = input('Insira o valor de a: ');
 #b = input('Insira o valor de b: ');
-#f = str2func(input('Defina a função na forma f = @(x) expressão: ', 's'));
-printf("f = %s\n", func2str(f));
 
-[w,t] = metodoDeIntegracao(a,b,N);
-
-g = zeros(2*N,1);
-for i = 1:(2*N),
-    y = @(x) x.^(i-1);
-    g(i) = simpson38(y,a,b,2*N);
-endfor
-
-printf("g: ");
-disp(g);
 
 [w,t] = metodoDeIntegracao(a,b,N);
 printf("W: ");
 disp(w);
 printf("T: ");
 disp(t);
+
+g = zeros(2*N,1);
+for i = 1:(2*N),
+    y = @(x) x.^(i-1);
+    g(i) = simpson38(y,a,b,2*N);
+endfor
+printf("g: ");
+disp(g);
+
+
 while true
     [F] = funcaoWT(w,t,g,N);
-    [J] = jacobiana(w,t,g,N,E);
+    [J] = jacobiana(w,t,g,N,E,F);
     printf("F: ");
     disp(F);
     printf("JACOBIANA: ");
     disp(J);
-    s = -J\F;
+    
+    s = linsolve(J,-F);
     printf("S: ");
     disp(s);
+    
     for i = 1:(2*N)
       if i <= N
         wnext(i) = s(i) + w(i);
