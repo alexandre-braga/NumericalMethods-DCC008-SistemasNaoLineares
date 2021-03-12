@@ -74,10 +74,10 @@ args = argv();
 
 printf("Iniciando o programa\n");
 tol = 10e-8;
-E = 10e-8;
+E = 10e-24;
 a = -1;
 b =  1;
-N =  4;
+N =  6;
 it = 0;
 
 #tol = input('Insira a tolerância: ');
@@ -96,7 +96,7 @@ disp(t);
 g = zeros(2*N,1);
 for i = 1:(2*N),
     y = @(x) x.^(i-1);
-    g(i) = simpson38(y,a,b,2*N);
+    g(i) = simpson38(y,a,b,1000);
 endfor
 printf("g: ");
 disp(g);
