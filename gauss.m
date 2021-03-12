@@ -4,11 +4,14 @@
 function [w,t] = metodoDeIntegracao(a,b,N)
     w = zeros(N, 1);
     t = zeros(N, 1);
-    for i = 1:N/2,
+    for i = 1:ceil(N/2)
         w(i) = i*(b-a)/(2*N);
-        w(N-i) = w(i);
+        w(N+1-i) = w(i);
         t(i) = a + i*w(i)/2;
-        t(N-i) = t(i);
+        t(N+1-i) = t(i);
+        if i == N+1-i
+          t(i) = (a+b)/2;
+        endif
     endfor
 endfunction
 
@@ -77,7 +80,7 @@ tol = 10e-8;
 E = 10e-8;
 a = -1;
 b =  1;
-N =  10;
+N =  7;
 f = @(x) x.^2 + log(x);
 
 #tol = input('Insira a tolerância: ');
@@ -96,20 +99,25 @@ for i = 1:(2*N),
     g(i) = simpson38(y,a,b,2*N);
 endfor
 
-for i = 1:N,
- printf("%d = %f\n", i, g(i));
-endfor
+printf("g: ");
+disp(g);
 
-[J] = jacobiana(w,t,g,N,E);
-
+[w,t] = metodoDeIntegracao(a,b,N);
+printf("W: ");
+disp(w);
+printf("T: ");
+disp(t);
 while true
-    [w,t] = metodoDeIntegracao(a,b,N);
     [F] = funcaoWT(w,t,g,N);
     [J] = jacobiana(w,t,g,N,E);
     s = J\(-F);
-    
-    wnext = s*w + w;
-    tnext = s*t + t;
+    for i = 1:(2*N)
+      if i <= N
+        wnext(i) = s(i) + w(i);
+      else
+        tnext(i-N) = s(i) + t(i-N);
+      endif
+    endfor
     w = wnext;
     t = tnext;
     if(norm(s, inf) <= tol)
