@@ -20,9 +20,9 @@ function [F] = funcaoWT(w,t,g,N)
   for i = 1:(2*N),
     f = 0;
     for k = 1:N,
-      f += w(k) * t(k).^i - g(k);
+      f += w(k) * t(k).^(i-1);
     endfor
-    F(i) = f;
+    F(i) = f - g(i);
   endfor
 endfunction
 
@@ -80,8 +80,9 @@ tol = 10e-8;
 E = 10e-8;
 a = -1;
 b =  1;
-N =  7;
+N =  4;
 f = @(x) x.^2 + log(x);
+it = 0;
 
 #tol = input('Insira a tolerância: ');
 #E = input('Insira a perturbação: ');
@@ -110,7 +111,7 @@ disp(t);
 while true
     [F] = funcaoWT(w,t,g,N);
     [J] = jacobiana(w,t,g,N,E);
-    s = J\(-F);
+    s = -J\F;
     for i = 1:(2*N)
       if i <= N
         wnext(i) = s(i) + w(i);
@@ -120,12 +121,14 @@ while true
     endfor
     w = wnext;
     t = tnext;
+    it++;
     if(norm(s, inf) <= tol)
         break;
     endif
+    save PesosEPontosIntegrecao.txt it a b tol E N w t;
 endwhile
 
-save PesosEPontosIntegrecao.txt a b tol E h N w t;
+save PesosEPontosIntegrecaoFinal.txt it a b tol E h N w t;
 
 printf("Fim do programa\n");
 
