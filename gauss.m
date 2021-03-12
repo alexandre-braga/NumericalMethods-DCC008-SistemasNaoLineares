@@ -1,7 +1,7 @@
 #!/snap/bin/octave.octave-cli
 1;
 
-function [w,t,g] = metodoDeIntegracao(a,b,N)
+function [w,t] = metodoDeIntegracao(a,b,N)
     w = zeros(N, 1);
     t = zeros(N, 1);
     for i = 1:N/2,
@@ -13,8 +13,8 @@ function [w,t,g] = metodoDeIntegracao(a,b,N)
 endfunction
 
 function [F] = funcaoWT(w,t,g,N)
-  F = zeros(N,1);
-  for i = 1:N,
+  F = zeros(2*N,1);
+  for i = 1:(2*N),
     f = 0;
     for k = 1:N,
       f += w(k) * t(k).^i - g(k);
@@ -32,7 +32,7 @@ function [f] = funcaoWTdw(w,t,g,i,j,N,E)
       f += w(k) * t(k).^(i-1);
     endif
   endfor
-  f-= g(i);
+  f -= g(i);
 endfunction
 
 function [f] = funcaoWTdt(w,t,g,i,j,N,E)
@@ -50,12 +50,12 @@ endfunction
 function [df] = derivadaParcial(w,t,g,i,j,N,E)
   if j <= N
     f1 = funcaoWTdw(w,t,g,i,j,N,E);
-    f2 = funcaoWTdw(w,t,g,i,0,N,0);
-    df = (f1-f2)/E;
+    f0 = funcaoWTdw(w,t,g,i,0,N,0);
+    df = (f1-f0)/E;
   else
     f1 = funcaoWTdt(w,t,g,i,j,N,E);
-    f2 = funcaoWTdt(w,t,g,i,0,N,0);
-    df = (f1-f2)/E;
+    f0 = funcaoWTdt(w,t,g,i,0,N,0);
+    df = (f1-f0)/E;
   endif
 endfunction
 
@@ -102,16 +102,19 @@ endfor
 
 [J] = jacobiana(w,t,g,N,E);
 
-while norm(s, inf) > tol
-    [w,t,g] = metodoDeIntegracao(a,b,N);
+while true
+    [w,t] = metodoDeIntegracao(a,b,N);
     [F] = funcaoWT(w,t,g,N);
-    [J] = jacobiana(w,t,g,N);
+    [J] = jacobiana(w,t,g,N,E);
     s = J\(-F);
     
     wnext = s*w + w;
     tnext = s*t + t;
     w = wnext;
     t = tnext;
+    if(norm(s, inf) <= tol)
+        break;
+    endif
 endwhile
 
 save PesosEPontosIntegrecao.txt a b tol E h N w t;
