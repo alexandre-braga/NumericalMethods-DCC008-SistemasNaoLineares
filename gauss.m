@@ -77,7 +77,7 @@ tol = 10e-8;
 E = 10e-8;
 a = -1;
 b =  1;
-N =  2;
+N =  4;
 it = 0;
 
 #tol = input('Insira a tolerância: ');
