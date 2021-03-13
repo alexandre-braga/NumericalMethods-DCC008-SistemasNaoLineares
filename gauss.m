@@ -75,15 +75,10 @@ args = argv();
 printf("Iniciando o programa\n");
 tol = 10e-8;
 E = 10e-8;
-a = -1;
-b =  1;
-N =  6;
 
-#tol = input('Insira a tolerância: ');
-#E = input('Insira a perturbação: ');
-#N = input('Defina o número de pontos de integração: ');
-#a = input('Insira o valor de a: ');
-#b = input('Insira o valor de b: ');
+N = input('Defina o número de pontos de integração: ');
+a = input('Insira o valor de a: ');
+b = input('Insira o valor de b: ');
 
 
 [w,t] = metodoDeIntegracao(a,b,N);

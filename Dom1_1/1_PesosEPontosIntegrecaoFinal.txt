@@ -1,0 +1,55 @@
+# Created by Octave 5.2.0, Sat Mar 13 00:09:00 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# name: F
+# type: matrix
+# rows: 2
+# columns: 1
+ -5.8386717682878952e-10
+ 6.201636422996162e-17
+
+
+# name: J
+# type: matrix
+# rows: 2
+# columns: 2
+ 0.99999999836342113 0
+ 6.2016364158898392e-17 1.9999999994161342
+
+
+# name: s
+# type: matrix
+# rows: 2
+# columns: 1
+ 5.838671777843342e-10
+ -3.1008182142137778e-17
+
+
+# name: w
+# type: scalar
+1.9999999994161342
+
+
+# name: t
+# type: scalar
+6.2016364266170854e-17
+
+
+# name: erro
+# type: scalar
+5.838671777843342e-10
+
+
+# name: tol
+# type: scalar
+9.9999999999999995e-08
+
+
+# name: E
+# type: scalar
+9.9999999999999995e-08
+
+
+# name: N
+# type: scalar
+1
+
+
