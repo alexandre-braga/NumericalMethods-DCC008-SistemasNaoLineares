@@ -1,0 +1,55 @@
+# Created by Octave 5.2.0, Sat Mar 13 00:41:15 2021 -03 <caio@xubuntu>
+# name: F
+# type: matrix
+# rows: 2
+# columns: 1
+ 4.9097366172645707e-09
+ -1.3530843134763412e-16
+
+
+# name: J
+# type: matrix
+# rows: 2
+# columns: 2
+ 1.0000000028043132 0
+ -4.5102810655953788e-17 6.0000000049097419
+
+
+# name: s
+# type: matrix
+# rows: 2
+# columns: 1
+ -4.9097366034961312e-09
+ 2.2551405169244937e-17
+
+
+# name: w
+# type: scalar
+6.0000000049097419
+
+
+# name: t
+# type: scalar
+-4.5102810375396984e-17
+
+
+# name: erro
+# type: scalar
+4.9097366034961312e-09
+
+
+# name: tol
+# type: scalar
+9.9999999999999995e-08
+
+
+# name: E
+# type: scalar
+9.9999999999999995e-08
+
+
+# name: N
+# type: scalar
+1
+
+
