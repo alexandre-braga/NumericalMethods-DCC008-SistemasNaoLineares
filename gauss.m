@@ -3,27 +3,30 @@
 format long;
 
 function [w,t] = metodoDeIntegracao(a,b,N)
-    w = zeros(N, 1);
-    t = zeros(N, 1);
+    w = double(zeros(N, 1));
+    t = double(zeros(N, 1));
     for i = 1:ceil(N/2)
         w(i) = i*(b-a)/(2*N);
         w(N+1-i) = w(i);
-        t(i) = a + i*w(i)/2;
-        t(N+1-i) = t(i);
         if i == N+1-i
           t(i) = (a+b)/2;
+        else
+          t(i) = a + i*w(i)/2;
+          t(N+1-i) = t(i);
         endif
     endfor
 endfunction
 
 function [F] = funcaoWT(w,t,g,N)
-  F = zeros(2*N,1);
+  F = double(zeros(2*N,1));
   for i = 1:(2*N),
-    f = 0;
     for k = 1:N,
-      f += w(k) * t(k).^(i-1);
+      F(i) += w(k) * t(k).^(i-1);
+      #printf("w(%d) = %f && t(%d) = %f\n", k, w(k), k, t(k));
+      #printf("F(%d) = %f\n", i, F(i));
     endfor
-    F(i) = f - g(i);
+    printf("g(%d) = %f && F(%d) = %f\n", i, g(i), i, F(i));
+    F(i) -= g(i);
   endfor
 endfunction
 
@@ -60,10 +63,10 @@ function [df] = derivadaParcial(w,t,g,i,j,N,E)
 endfunction
 
 function [J] = jacobiana(w,t,g,N,E,F)
-    J = zeros(2*N,2*N);
+    J = double(zeros(2*N,2*N));
     for i = 1:(2*N),
        for j = 1:(2*N),
-          J(i,j) = (derivadaParcial(w,t,g,i,j,N,E)-F(i))/E; 
+          J(i,j) = (derivadaParcial(w,t,g,i,j,N,E)-derivadaParcial(w,t,g,i,j,N,0))/E;
        endfor
     endfor
 endfunction
@@ -74,7 +77,7 @@ args = argv();
 
 printf("Iniciando o programa\n");
 tol = 10e-8;
-E = 10e-24;
+E = 10e-8;
 a = -1;
 b =  1;
 N =  6;
@@ -96,24 +99,26 @@ disp(t);
 g = zeros(2*N,1);
 for i = 1:(2*N),
     y = @(x) x.^(i-1);
-    g(i) = simpson38(y,a,b,1000);
+    g(i) = pontoMedio(y,a,b,1000);
 endfor
 printf("g: ");
 disp(g);
 
-
 while true
     [F] = funcaoWT(w,t,g,N);
+    #F = zeros(2*N,1);
     [J] = jacobiana(w,t,g,N,E,F);
     printf("F: ");
     disp(F);
     printf("JACOBIANA: ");
     disp(J);
     
-    s = linsolve(J,-F);
+    s = J\(-F);
     printf("S: ");
     disp(s);
-    
+
+    save matrizes.txt F J s;
+    break;    
     for i = 1:(2*N)
       if i <= N
         wnext(i) = s(i) + w(i);
@@ -132,7 +137,7 @@ while true
     save PesosEPontosIntegrecao.txt it a b tol E N w t;
 endwhile
 
-save PesosEPontosIntegrecaoFinal.txt it a b tol E h N w t;
+save PesosEPontosIntegrecaoFinal.txt it a b tol E N w t;
 
 printf("Fim do programa\n");
 
