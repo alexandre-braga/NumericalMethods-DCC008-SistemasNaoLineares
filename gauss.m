@@ -68,6 +68,14 @@ function [J] = jacobiana(w,t,g,N,E,F)
     endfor
 endfunction
 
+function [Gf] = quadraturaGaussiana(a,b,w,t,N)
+    Gf = 0;
+    f = @(t) a*t.+b;
+    for i = 1:N,
+       Gf += w(i) * f(t(i));
+    endfor
+endfunction
+
 
 addpath(pwd);
 args = argv();
@@ -120,6 +128,8 @@ while true
 endwhile
 
 save PesosEPontosIntegrecaoFinal.txt F J s w t erro tol E N;
+[Gf] = quadraturaGaussiana(a,b,w,t,N);
+save IntegralPelaQuadraturaGaussiana Gf a b w t N;
 
 printf("Fim do programa\n");
 
