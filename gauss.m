@@ -22,10 +22,7 @@ function [F] = funcaoWT(w,t,g,N)
   for i = 1:(2*N),
     for k = 1:N,
       F(i) += w(k) * t(k).^(i-1);
-      #printf("w(%d) = %f && t(%d) = %f\n", k, w(k), k, t(k));
-      #printf("F(%d) = %f\n", i, F(i));
     endfor
-    printf("g(%d) = %f && F(%d) = %f\n", i, g(i), i, F(i));
     F(i) -= g(i);
   endfor
 endfunction
@@ -81,7 +78,6 @@ E = 10e-8;
 a = -1;
 b =  1;
 N =  6;
-it = 0;
 
 #tol = input('Insira a tolerância: ');
 #E = input('Insira a perturbação: ');
@@ -91,31 +87,21 @@ it = 0;
 
 
 [w,t] = metodoDeIntegracao(a,b,N);
-printf("W: ");
-disp(w);
-printf("T: ");
-disp(t);
 
 g = zeros(2*N,1);
 for i = 1:(2*N),
     y = @(x) x.^(i-1);
     g(i) = pontoMedio(y,a,b,1000);
 endfor
-printf("g: ");
-disp(g);
 
+save PesosIniciais.txt w t g a b N tol E;
+
+cont = 0;
 while true
     [F] = funcaoWT(w,t,g,N);
-    #F = zeros(2*N,1);
     [J] = jacobiana(w,t,g,N,E,F);
-    printf("F: ");
-    disp(F);
-    printf("JACOBIANA: ");
-    disp(J);
     
     s = J\(-F);
-    printf("S: ");
-    disp(s);
 
     for i = 1:(2*N)
       if i <= N
@@ -124,18 +110,21 @@ while true
         tnext(i-N) = s(i) + t(i-N);
       endif
     endfor
-    w = wnext;
-    t = tnext;
-    it++;
-    printf("TNEXT: ");
-    disp(tnext);
-    if(norm(s, inf) <= tol)
+    
+    erro = norm(s, inf);
+    if(erro <= tol)
         break;
     endif
-    save PesosEPontosIntegrecao.txt it a b tol E N w t;
+
+    nome = sprintf("log/PesosEPontosIntegrecao%d.txt", cont);
+    save(nome, 'F', 'J', 's', 'w', 't', 'erro', 'tol', 'E', 'N');
+    w = wnext;
+    t = tnext;
+    cont++;
+
 endwhile
 
-save PesosEPontosIntegrecaoFinal.txt it a b tol E N w t;
+save PesosEPontosIntegrecaoFinal.txt F J s w t erro tol E N;
 
 printf("Fim do programa\n");
 
