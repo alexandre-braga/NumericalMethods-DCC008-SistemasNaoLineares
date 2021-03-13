@@ -12,7 +12,7 @@ function [w,t] = metodoDeIntegracao(a,b,N)
           t(i) = (a+b)/2;
         else
           t(i) = a + i*w(i)/2;
-          t(N+1-i) = t(i);
+          t(N+1-i) = -t(i);
         endif
     endfor
 endfunction
@@ -117,8 +117,6 @@ while true
     printf("S: ");
     disp(s);
 
-    save matrizes.txt F J s;
-    break;    
     for i = 1:(2*N)
       if i <= N
         wnext(i) = s(i) + w(i);
