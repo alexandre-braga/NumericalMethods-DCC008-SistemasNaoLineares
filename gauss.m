@@ -70,7 +70,7 @@ endfunction
 
 function [Gf] = quadraturaGaussiana(a,b,w,t,N)
     Gf = 0;
-    f = @(t) a*t.+b;
+    f = @(t) exp(a*t.+b);
     for i = 1:N,
        Gf += w(i) * f(t(i));
     endfor

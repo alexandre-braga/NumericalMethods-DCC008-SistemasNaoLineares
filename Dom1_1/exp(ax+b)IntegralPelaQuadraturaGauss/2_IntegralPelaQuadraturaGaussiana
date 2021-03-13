@@ -1,0 +1,35 @@
+# Created by Octave 5.2.0, Sat Mar 13 02:01:57 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# name: Gf
+# type: scalar
+6.3681075617380714
+
+
+# name: a
+# type: scalar
+-1
+
+
+# name: b
+# type: scalar
+1
+
+
+# name: w
+# type: matrix
+# rows: 1
+# columns: 2
+ 1.0000000001463185 0.99999999985368304
+
+
+# name: t
+# type: matrix
+# rows: 1
+# columns: 2
+ -0.57735007503244962 0.57735007520810455
+
+
+# name: N
+# type: scalar
+2
+
+
