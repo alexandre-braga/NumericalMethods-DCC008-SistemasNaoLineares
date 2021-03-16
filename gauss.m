@@ -12,7 +12,7 @@ function [w,t] = metodoDeIntegracao(a,b,N)
           t(i) = (a+b)/2;
         else
           t(i) = a + i*w(i)/2;
-          t(N+1-i) = -t(i);
+          t(N+1-i) = a + b - t(i);
         endif
     endfor
 endfunction
@@ -68,9 +68,8 @@ function [J] = jacobiana(w,t,g,N,E,F)
     endfor
 endfunction
 
-function [Gf] = quadraturaGaussiana(a,b,w,t,N)
+function [Gf] = quadraturaGaussiana(f,a,b,w,t,N)
     Gf = 0;
-    f = @(t) exp(a*t.+b);
     for i = 1:N,
        Gf += w(i) * f(t(i));
     endfor
@@ -128,8 +127,15 @@ while true
 endwhile
 
 save PesosEPontosIntegrecaoFinal.txt F J s w t erro tol E N;
-[Gf] = quadraturaGaussiana(a,b,w,t,N);
-save IntegralPelaQuadraturaGaussiana Gf a b w t N;
+
+f = @(x) cos(a*x + b);
+printf("f = %s\n", func2str(f));
+[Gf] = quadraturaGaussiana(f,a,b,w,t,N);
+exata = (sin(10) + sin(2))/3;
+errabs = abs(Gf - exata);
+
+nome = sprintf("Integrais/%d_IntegralPelaQuadraturaGaussiana.txt", N);
+save(nome, 'exata', 'Gf', 'errabs', 'a', 'b', 'w', 't', 'N');
 
 printf("Fim do programa\n");
 
